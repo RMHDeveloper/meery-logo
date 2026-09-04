@@ -15,7 +15,9 @@ export const PROMPT_TEMPLATE = (companyName: string) => {
     ? `The text '${name}' should be described as elegantly embossed directly beneath the icon in a clean, modern sans-serif font.`
     : `No brand name should be included in the design — describe the icon on its own.`;
 
-  return `You are a premium product designer. Look at the uploaded logo image and write a vivid, detailed design brief (200-300 words) for a professional product photograph of a glossy, transparent crystal-glass Christmas ornament shaped around this exact logo, hanging from a lush green Christmas tree branch.
+  return `You are a premium product designer. Look carefully at the uploaded logo image — it is the only subject of this task. Base every detail strictly on what is actually visible in that image (its real shape, icon, and colors); never invent or describe any other person, object, or scene.
+
+Write a vivid, detailed design brief (200-300 words) for a professional product photograph of a glossy, transparent crystal-glass Christmas ornament shaped around this exact logo, hanging from a lush green Christmas tree branch.
 
 Describe: how the icon from the uploaded logo is centered and embossed inside the glass while preserving its original shape, colors and proportions; ${brandLine} the premium crystal-glass texture with realistic silver reflections; the small silver metal cap and natural twine loop suspending the ornament; the softly blurred Christmas tree background with warm golden fairy light bokeh and out-of-focus silver and gold baubles; shallow depth of field, cinematic lighting, ultra-realistic reflections, festive luxury mood, professional 4K product photography, vertical composition.
 

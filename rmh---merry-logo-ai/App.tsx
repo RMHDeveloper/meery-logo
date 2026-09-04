@@ -38,6 +38,7 @@ const App: React.FC = () => {
       const description = await generateOrnamentDescription(state.logo, state.logoMimeType, state.companyName);
       const imageUrl = buildOrnamentImageUrl(description);
       await preloadImage(imageUrl);
+
       setState(prev => ({
         ...prev,
         isGenerating: false,
