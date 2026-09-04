@@ -1,6 +1,6 @@
 
 import React, { useRef, useState } from 'react';
-import { TreeIcon } from '../constants';
+import { CloudUploadIcon } from '../constants';
 
 interface LogoUploaderProps {
   onUpload: (base64: string, mimeType: string) => void;
@@ -28,16 +28,16 @@ const LogoUploader: React.FC<LogoUploaderProps> = ({ onUpload, currentLogo }) =>
 
   return (
     <div className="w-full">
-      <label className="block text-sm font-medium text-gray-700 mb-2">Company Logo</label>
       <div
         onClick={triggerUpload}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         className={`
-          relative cursor-pointer transition-all duration-300 rounded-xl
-          flex flex-col items-center justify-center p-8 text-center
-          ${currentLogo ? 'border-solid border-[#2D5016] bg-green-50' : 'border-2 border-dashed border-gray-300 hover:border-[#2D5016] hover:bg-green-50'}
-          ${isHovered ? 'border-solid border-[#2D5016]' : ''}
+          relative cursor-pointer transition-all duration-300 rounded-2xl
+          flex flex-col items-center justify-center p-10 text-center
+          border-2 border-dashed
+          ${currentLogo ? 'border-[#2D5016] bg-green-50' : 'border-green-200 bg-green-50/40 hover:border-[#2D5016] hover:bg-green-50'}
+          ${isHovered ? 'border-[#2D5016]' : ''}
         `}
       >
         <input
@@ -47,7 +47,7 @@ const LogoUploader: React.FC<LogoUploaderProps> = ({ onUpload, currentLogo }) =>
           className="hidden"
           accept=".png,.jpg,.jpeg,.svg"
         />
-        
+
         {currentLogo ? (
           <div className="space-y-4">
             <img src={currentLogo} alt="Logo preview" className="max-h-24 object-contain mx-auto rounded" />
@@ -55,7 +55,7 @@ const LogoUploader: React.FC<LogoUploaderProps> = ({ onUpload, currentLogo }) =>
           </div>
         ) : (
           <>
-            <TreeIcon />
+            <CloudUploadIcon />
             <p className="mt-4 text-sm text-gray-600">
               <span className="font-semibold text-[#2D5016]">Click to upload</span> or drag and drop
             </p>
