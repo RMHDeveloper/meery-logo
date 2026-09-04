@@ -9,6 +9,18 @@ export const COLORS = {
 
 export const RMH_LOGO_URL = 'https://i.ibb.co/Xxh2Vr9Y/RMH-logo.jpg';
 
+// Used by Gemini's image model: a direct visual prompt paired with the uploaded logo image.
+export const IMAGE_PROMPT_TEMPLATE = (companyName: string) => {
+  const name = companyName.trim();
+
+  if (name) {
+    return `A close-up, front-view photograph of a glossy, transparent glass ornament hanging from a lush green Christmas tree branch. The ornament is shaped like the uploaded icon, accurately matching its clean edges and minimalist style. Centered inside the glass, the icon is prominently displayed with the text '${name}' elegantly embossed directly beneath it in a clean, modern sans-serif font. Both the icon and text maintain a premium crystal-glass texture with realistic silver reflections. The ornament is suspended using a small silver metal cap and natural twine loop. The background features a softly blurred Christmas tree with warm golden fairy lights creating elegant bokeh. Shallow depth of field, cinematic lighting, ultra-realistic reflections, festive luxury mood, professional product photography, 4K quality, vertical composition.`;
+  }
+
+  return `A close-up, front-view photograph of a glossy, transparent glass ornament hanging from a lush green Christmas tree branch. The ornament is shaped like the uploaded icon, accurately matching the provided icon with clean edges and a premium crystal-glass texture. The icon appears centered, smooth, and embossed inside the ornament, maintaining its original colors and proportions. The ornament is suspended from a pine branch using a small silver metal cap and natural twine loop. The background features a softly blurred Christmas tree with warm golden fairy lights creating elegant bokeh, along with out-of-focus silver and gold baubles. Shallow depth of field, cinematic lighting, ultra-realistic reflections, festive luxury mood, professional product photography, high detail, 4K quality, vertical composition.`;
+};
+
+// Used by OpenRouter (free, text-only) for the "Design brief" panel: asks it to write about the image, not generate one.
 export const PROMPT_TEMPLATE = (companyName: string) => {
   const name = companyName.trim();
   const brandLine = name
