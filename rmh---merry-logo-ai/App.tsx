@@ -6,7 +6,7 @@ import LogoUploader from './components/LogoUploader';
 import LoadingOverlay from './components/LoadingOverlay';
 import ResultView from './components/ResultView';
 import { generateOrnamentDescription } from './services/openrouterService';
-import { generateOrnamentImage } from './services/geminiService';
+import { buildOrnamentImageUrl, preloadImage } from './services/pollinationsService';
 
 const App: React.FC = () => {
   const [state, setState] = useState<AppState>({
@@ -35,27 +35,15 @@ const App: React.FC = () => {
     setState(prev => ({ ...prev, isGenerating: true, error: null }));
 
     try {
-      // The image (Gemini, true image-to-image) is the main feature and must succeed.
-      // The design brief (OpenRouter, free-tier text) is a bonus — fall back gracefully if it flakes.
-      const [imageResult, descriptionResult] = await Promise.allSettled([
-        generateOrnamentImage(state.logo, state.logoMimeType, state.companyName),
-        generateOrnamentDescription(state.logo, state.logoMimeType, state.companyName),
-      ]);
-
-      if (imageResult.status === 'rejected') {
-        throw imageResult.reason;
-      }
-
-      const description = descriptionResult.status === 'fulfilled'
-        ? descriptionResult.value
-        : "A glossy, transparent crystal-glass Christmas ornament featuring your logo, embossed with premium silver reflections and warm festive bokeh.";
-
+      const description = await generateOrnamentDescription(state.logo, state.logoMimeType, state.companyName);
+      const imageUrl = buildOrnamentImageUrl(description);
+      await preloadImage(imageUrl);
       setState(prev => ({
         ...prev,
         isGenerating: false,
         result: {
           description,
-          imageUrl: imageResult.value,
+          imageUrl,
           timestamp: Date.now(),
         },
       }));
