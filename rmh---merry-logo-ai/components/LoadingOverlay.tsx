@@ -13,8 +13,7 @@ const LoadingOverlay: React.FC = () => {
       </div>
       <div className="text-center">
         <h3 className="text-xl font-semibold text-[#2D5016]">Crafting Your Ornament...</h3>
-        <p className="text-gray-500 mt-2">Our AI is polishing the glass and placing your logo.</p>
-        <p className="text-gray-400 text-xs mt-1">This can take up to a minute or two on our free AI tier.</p>
+        <p className="text-gray-500 mt-2">Setting your logo into its gold medallion.</p>
       </div>
       <div className="flex gap-2">
         {[1, 2, 3].map((i) => (

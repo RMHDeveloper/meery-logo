@@ -5,8 +5,7 @@ import { RMH_LOGO_URL, BuildingIcon, LockIcon, SparkleIcon } from './constants';
 import LogoUploader from './components/LogoUploader';
 import LoadingOverlay from './components/LoadingOverlay';
 import ResultView from './components/ResultView';
-import { generateOrnamentDescription } from './services/openrouterService';
-import { buildOrnamentImageUrl, preloadImage } from './services/pollinationsService';
+import { generateOrnamentBadge } from './services/badgeService';
 
 const App: React.FC = () => {
   const [state, setState] = useState<AppState>({
@@ -35,15 +34,12 @@ const App: React.FC = () => {
     setState(prev => ({ ...prev, isGenerating: true, error: null }));
 
     try {
-      const description = await generateOrnamentDescription(state.logo, state.logoMimeType, state.companyName);
-      const imageUrl = buildOrnamentImageUrl(description);
-      await preloadImage(imageUrl);
+      const imageUrl = await generateOrnamentBadge(state.logo);
 
       setState(prev => ({
         ...prev,
         isGenerating: false,
         result: {
-          description,
           imageUrl,
           timestamp: Date.now(),
         },
