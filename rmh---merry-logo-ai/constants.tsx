@@ -11,14 +11,15 @@ export const RMH_LOGO_URL = 'https://i.ibb.co/Xxh2Vr9Y/RMH-logo.jpg';
 
 export const PROMPT_TEMPLATE = (companyName: string) => {
   const name = companyName.trim();
-  
-  if (name) {
-    // Prompt for when a company name is provided
-    return `A close-up, front-view photograph of a glossy, transparent glass ornament hanging from a lush green Christmas tree branch. The ornament is shaped like the uploaded icon, accurately matching its clean edges and minimalist style. Centered inside the glass, the icon is prominently displayed with the text '${name}' elegantly embossed directly beneath it in a clean, modern sans-serif font. Both the icon and text maintain a premium crystal-glass texture with realistic silver reflections. The ornament is suspended using a small silver metal cap and natural twine loop. The background features a softly blurred Christmas tree with warm golden fairy lights creating elegant bokeh. Shallow depth of field, cinematic lighting, ultra-realistic reflections, festive luxury mood, professional product photography, 4K quality, vertical composition.`;
-  }
+  const brandLine = name
+    ? `The text '${name}' should be described as elegantly embossed directly beneath the icon in a clean, modern sans-serif font.`
+    : `No brand name should be included in the design — describe the icon on its own.`;
 
-  // Prompt for when no company name is provided (as per user request)
-  return `A close-up, front-view photograph of a glossy, transparent glass ornament hanging from a lush green Christmas tree branch. The ornament is shaped like the uploaded icon, accurately matching the provided icon with clean edges and a premium crystal-glass texture. The icon appears centered, smooth, and embossed inside the ornament, maintaining its original colors and proportions. The ornament is suspended from a pine branch using a small silver metal cap and natural twine loop. The background features a softly blurred Christmas tree with warm golden fairy lights creating elegant bokeh, along with out-of-focus silver and gold baubles. Shallow depth of field, cinematic lighting, ultra-realistic reflections, festive luxury mood, professional product photography, high detail, 4K quality, vertical composition.`;
+  return `You are a premium product designer. Look at the uploaded logo image and write a vivid, detailed design brief (200-300 words) for a professional product photograph of a glossy, transparent crystal-glass Christmas ornament shaped around this exact logo, hanging from a lush green Christmas tree branch.
+
+Describe: how the icon from the uploaded logo is centered and embossed inside the glass while preserving its original shape, colors and proportions; ${brandLine} the premium crystal-glass texture with realistic silver reflections; the small silver metal cap and natural twine loop suspending the ornament; the softly blurred Christmas tree background with warm golden fairy light bokeh and out-of-focus silver and gold baubles; shallow depth of field, cinematic lighting, ultra-realistic reflections, festive luxury mood, professional 4K product photography, vertical composition.
+
+Write it as a single flowing, evocative description (not a bullet list) that a designer or artist could use as a creative brief.`;
 };
 
 export const TreeIcon = () => (

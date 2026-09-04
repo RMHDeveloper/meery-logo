@@ -1,6 +1,6 @@
 
 export interface GenerationResult {
-  imageUrl: string;
+  description: string;
   timestamp: number;
 }
 

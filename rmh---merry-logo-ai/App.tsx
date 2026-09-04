@@ -5,7 +5,7 @@ import { RMH_LOGO_URL } from './constants';
 import LogoUploader from './components/LogoUploader';
 import LoadingOverlay from './components/LoadingOverlay';
 import ResultView from './components/ResultView';
-import { generateOrnamentImage } from './services/geminiService';
+import { generateOrnamentDescription } from './services/openrouterService';
 
 const App: React.FC = () => {
   const [state, setState] = useState<AppState>({
@@ -34,12 +34,12 @@ const App: React.FC = () => {
     setState(prev => ({ ...prev, isGenerating: true, error: null }));
 
     try {
-      const imageUrl = await generateOrnamentImage(state.logo, state.logoMimeType, state.companyName);
+      const description = await generateOrnamentDescription(state.logo, state.logoMimeType, state.companyName);
       setState(prev => ({
         ...prev,
         isGenerating: false,
         result: {
-          imageUrl,
+          description,
           timestamp: Date.now(),
         },
       }));
@@ -99,7 +99,7 @@ const App: React.FC = () => {
             Magical Christmas Ornaments
           </h2>
           <p className="text-gray-600">
-            Transform your company logo into a professional 4K crystal-glass ornament.
+            Turn your company logo into an AI-crafted design brief for a professional 4K crystal-glass ornament.
           </p>
         </div>
 
@@ -157,7 +157,7 @@ const App: React.FC = () => {
                     : 'bg-gray-100 text-gray-400 cursor-not-allowed'}
                 `}
               >
-                <span>Generate Ornament</span>
+                <span>Generate Design Brief</span>
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
