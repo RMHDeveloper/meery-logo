@@ -9,6 +9,34 @@ export const COLORS = {
 
 export const RMH_LOGO_URL = 'https://i.ibb.co/Xxh2Vr9Y/RMH-logo.jpg';
 
+// Used by Gemini's image model (true image-to-image: it actually sees the uploaded logo).
+export const IMAGE_PROMPT_TEMPLATE = (companyName: string) => {
+  const name = companyName.trim();
+
+  if (name) {
+    return `A close-up, front-view photograph of a glossy, transparent glass ornament hanging from a lush green Christmas tree branch. The ornament is shaped like the uploaded icon, accurately matching its clean edges and minimalist style. Centered inside the glass, the icon is prominently displayed with the text '${name}' elegantly embossed directly beneath it in a clean, modern sans-serif font. Both the icon and text maintain a premium crystal-glass texture with realistic silver reflections. The ornament is suspended using a small silver metal cap and natural twine loop. The background features a softly blurred Christmas tree with warm golden fairy lights creating elegant bokeh. Shallow depth of field, cinematic lighting, ultra-realistic reflections, festive luxury mood, professional product photography, 4K quality, vertical composition.`;
+  }
+
+  return `A close-up, front-view photograph of a glossy, transparent glass ornament hanging from a lush green Christmas tree branch. The ornament is shaped like the uploaded icon, accurately matching the provided icon with clean edges and a premium crystal-glass texture. The icon appears centered, smooth, and embossed inside the ornament, maintaining its original colors and proportions. The ornament is suspended from a pine branch using a small silver metal cap and natural twine loop. The background features a softly blurred Christmas tree with warm golden fairy lights creating elegant bokeh, along with out-of-focus silver and gold baubles. Shallow depth of field, cinematic lighting, ultra-realistic reflections, festive luxury mood, professional product photography, high detail, 4K quality, vertical composition.`;
+};
+
+// Used by OpenRouter (free, text-only) as the fallback path: asks it to describe the image
+// rather than generate one, and that description becomes the Pollinations text-to-image prompt.
+export const PROMPT_TEMPLATE = (companyName: string) => {
+  const name = companyName.trim();
+  const brandLine = name
+    ? `The text '${name}' should be described as elegantly embossed directly beneath the icon in a clean, modern sans-serif font.`
+    : `No brand name should be included in the design — describe the icon on its own.`;
+
+  return `You are a premium product designer. Look carefully at the uploaded logo image — it is the only subject of this task. Base every detail strictly on what is actually visible in that image (its real shape, icon, and colors); never invent or describe any other person, object, or scene.
+
+Write a vivid, detailed design brief (200-300 words) for a professional product photograph of a glossy, transparent crystal-glass Christmas ornament shaped around this exact logo, hanging from a lush green Christmas tree branch.
+
+Describe: how the icon from the uploaded logo is centered and embossed inside the glass while preserving its original shape, colors and proportions; ${brandLine} the premium crystal-glass texture with realistic silver reflections; the small silver metal cap and natural twine loop suspending the ornament; the softly blurred Christmas tree background with warm golden fairy light bokeh and out-of-focus silver and gold baubles; shallow depth of field, cinematic lighting, ultra-realistic reflections, festive luxury mood, professional 4K product photography, vertical composition.
+
+Write it as a single flowing, evocative description (not a bullet list) that a designer or artist could use as a creative brief.`;
+};
+
 export const TreeIcon = () => (
   <svg className="w-12 h-12 text-[#2D5016]" fill="currentColor" viewBox="0 0 24 24">
     <path d="M12 2L4.5 20.29L5.21 21L12 18L18.79 21L19.5 20.29L12 2Z" />

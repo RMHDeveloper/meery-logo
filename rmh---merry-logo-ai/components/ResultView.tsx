@@ -19,6 +19,11 @@ const ResultView: React.FC<ResultViewProps> = ({ result, companyName, onRestart 
     document.body.removeChild(link);
   };
 
+  // The AI-approximate fallback path (OpenRouter + Pollinations) returns an external https:
+  // URL, not a data: URL — canvas re-encoding would fail on that (cross-origin taint), so
+  // JPG conversion and the split PNG/JPG UI only apply to data: URLs (instant badge, Gemini).
+  const isDataUrl = result.imageUrl.startsWith('data:');
+
   const handleDownloadPng = () => {
     downloadDataUrl(result.imageUrl, `ornament_${result.timestamp}.png`);
   };
@@ -26,6 +31,17 @@ const ResultView: React.FC<ResultViewProps> = ({ result, companyName, onRestart 
   const handleDownloadJpg = async () => {
     const jpgUrl = await canvasToJpegDataUrl(result.imageUrl);
     downloadDataUrl(jpgUrl, `ornament_${result.timestamp}.jpg`);
+  };
+
+  const handleDownloadExternal = () => {
+    const link = document.createElement('a');
+    link.href = result.imageUrl;
+    link.download = `ornament_${result.timestamp}.jpg`;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const handleWhatsAppShare = () => {
@@ -46,27 +62,48 @@ const ResultView: React.FC<ResultViewProps> = ({ result, companyName, onRestart 
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <button
-          onClick={handleDownloadPng}
-          className="flex items-center justify-center space-x-2 bg-[#2D5016] hover:bg-[#1a310d] text-white py-3 px-6 rounded-lg transition-all shadow-lg active:scale-95"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+      {result.isApproximate && (
+        <div className="bg-amber-50 border border-amber-100 text-amber-700 text-sm p-4 rounded-xl flex items-start space-x-2">
+          <svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
           </svg>
-          <span className="font-semibold">Download PNG</span>
-        </button>
+          <span>This is an AI approximation of your logo's colors and style, not an exact match — the free-tier image model couldn't be reached.</span>
+        </div>
+      )}
 
+      {isDataUrl ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <button
+            onClick={handleDownloadPng}
+            className="flex items-center justify-center space-x-2 bg-[#2D5016] hover:bg-[#1a310d] text-white py-3 px-6 rounded-lg transition-all shadow-lg active:scale-95"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            <span className="font-semibold">Download PNG</span>
+          </button>
+
+          <button
+            onClick={handleDownloadJpg}
+            className="flex items-center justify-center space-x-2 bg-[#D4AF37] hover:bg-[#B8860B] text-white py-3 px-6 rounded-lg transition-all shadow-lg active:scale-95"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            <span className="font-semibold">Download JPG</span>
+          </button>
+        </div>
+      ) : (
         <button
-          onClick={handleDownloadJpg}
-          className="flex items-center justify-center space-x-2 bg-[#D4AF37] hover:bg-[#B8860B] text-white py-3 px-6 rounded-lg transition-all shadow-lg active:scale-95"
+          onClick={handleDownloadExternal}
+          className="w-full flex items-center justify-center space-x-2 bg-[#2D5016] hover:bg-[#1a310d] text-white py-3 px-6 rounded-lg transition-all shadow-lg active:scale-95"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
           </svg>
-          <span className="font-semibold">Download JPG</span>
+          <span className="font-semibold">Download Image</span>
         </button>
-      </div>
+      )}
 
       <button
         onClick={handleWhatsAppShare}

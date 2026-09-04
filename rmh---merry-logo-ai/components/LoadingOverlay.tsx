@@ -2,7 +2,11 @@
 import React from 'react';
 import { SnowflakeIcon } from '../constants';
 
-const LoadingOverlay: React.FC = () => {
+interface LoadingOverlayProps {
+  mode?: 'instant' | 'ai';
+}
+
+const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ mode = 'instant' }) => {
   return (
     <div className="flex flex-col items-center justify-center p-12 space-y-6">
       <div className="relative">
@@ -13,7 +17,9 @@ const LoadingOverlay: React.FC = () => {
       </div>
       <div className="text-center">
         <h3 className="text-xl font-semibold text-[#2D5016]">Crafting Your Ornament...</h3>
-        <p className="text-gray-500 mt-2">Setting your logo into its gold medallion.</p>
+        <p className="text-gray-500 mt-2">
+          {mode === 'ai' ? 'Our AI is reimagining your logo — this can take a minute.' : 'Setting your logo into its gold medallion.'}
+        </p>
       </div>
       <div className="flex gap-2">
         {[1, 2, 3].map((i) => (

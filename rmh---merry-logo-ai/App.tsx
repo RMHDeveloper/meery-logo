@@ -6,16 +6,22 @@ import LogoUploader from './components/LogoUploader';
 import LoadingOverlay from './components/LoadingOverlay';
 import ResultView from './components/ResultView';
 import { generateOrnamentBadge } from './services/badgeService';
+import { generateAiOrnament } from './services/aiOrnamentService';
 
 const App: React.FC = () => {
   const [state, setState] = useState<AppState>({
     logo: null,
     logoMimeType: null,
     companyName: '',
+    mode: 'instant',
     isGenerating: false,
     result: null,
     error: null,
   });
+
+  const setMode = (mode: AppState['mode']) => {
+    setState(prev => ({ ...prev, mode, error: null }));
+  };
 
   const handleLogoUpload = (base64: string, mimeType: string) => {
     setState(prev => ({ ...prev, logo: base64, logoMimeType: mimeType, error: null }));
@@ -34,13 +40,16 @@ const App: React.FC = () => {
     setState(prev => ({ ...prev, isGenerating: true, error: null }));
 
     try {
-      const imageUrl = await generateOrnamentBadge(state.logo);
+      const result = state.mode === 'ai'
+        ? await generateAiOrnament(state.logo, state.logoMimeType, state.companyName)
+        : { imageUrl: await generateOrnamentBadge(state.logo), isApproximate: false };
 
       setState(prev => ({
         ...prev,
         isGenerating: false,
         result: {
-          imageUrl,
+          imageUrl: result.imageUrl,
+          isApproximate: result.isApproximate,
           timestamp: Date.now(),
         },
       }));
@@ -54,14 +63,15 @@ const App: React.FC = () => {
   };
 
   const handleRestart = () => {
-    setState({
+    setState(prev => ({
       logo: null,
       logoMimeType: null,
       companyName: '',
+      mode: prev.mode,
       isGenerating: false,
       result: null,
       error: null,
-    });
+    }));
   };
 
   const isFormValid = !!state.logo;
@@ -100,7 +110,7 @@ const App: React.FC = () => {
 
           <div className="relative bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
             {state.isGenerating ? (
-              <LoadingOverlay />
+              <LoadingOverlay mode={state.mode} />
             ) : state.result ? (
               <ResultView
                 result={state.result}
@@ -118,6 +128,35 @@ const App: React.FC = () => {
                   </h2>
                   <p className="text-sm text-gray-500">
                     Supports PNG, JPG or SVG (Max 5MB)
+                  </p>
+                </div>
+
+                {/* Generation Mode Toggle */}
+                <div>
+                  <div className="grid grid-cols-2 gap-2 p-1 bg-gray-100 rounded-xl">
+                    <button
+                      type="button"
+                      onClick={() => setMode('instant')}
+                      className={`py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                        state.mode === 'instant' ? 'bg-white text-[#2D5016] shadow' : 'text-gray-500'
+                      }`}
+                    >
+                      ⚡ Instant Badge
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setMode('ai')}
+                      className={`py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                        state.mode === 'ai' ? 'bg-white text-[#2D5016] shadow' : 'text-gray-500'
+                      }`}
+                    >
+                      ✨ AI Ornament
+                    </button>
+                  </div>
+                  <p className="text-xs text-gray-400 mt-2 text-center">
+                    {state.mode === 'instant'
+                      ? 'Instant, free, and pixel-perfect — composites your real logo into a gold medallion.'
+                      : 'Experimental: an AI reimagines your logo as a 3D scene. Slower, and may only approximate it.'}
                   </p>
                 </div>
 
