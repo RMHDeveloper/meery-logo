@@ -12,7 +12,8 @@ export const chatCompletion = async (
   messages: { role: "system" | "user" | "assistant"; content: string | ContentPart[] }[],
   model = MODEL
 ): Promise<string> => {
-  if (!process.env.OPENROUTER_API_KEY) {
+  const apiKey = process.env.OPENROUTER_API_KEY?.trim();
+  if (!apiKey) {
     throw new Error("OpenRouter API key is missing. Please set OPENROUTER_API_KEY in .env.");
   }
 
@@ -24,7 +25,7 @@ export const chatCompletion = async (
     response = await fetch(OPENROUTER_URL, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ model, messages }),
