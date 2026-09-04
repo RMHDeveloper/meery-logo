@@ -6,6 +6,7 @@ import LogoUploader from './components/LogoUploader';
 import LoadingOverlay from './components/LoadingOverlay';
 import ResultView from './components/ResultView';
 import { generateOrnamentDescription } from './services/openrouterService';
+import { buildOrnamentImageUrl, preloadImage } from './services/pollinationsService';
 
 const App: React.FC = () => {
   const [state, setState] = useState<AppState>({
@@ -35,11 +36,14 @@ const App: React.FC = () => {
 
     try {
       const description = await generateOrnamentDescription(state.logo, state.logoMimeType, state.companyName);
+      const imageUrl = buildOrnamentImageUrl(description);
+      await preloadImage(imageUrl);
       setState(prev => ({
         ...prev,
         isGenerating: false,
         result: {
           description,
+          imageUrl,
           timestamp: Date.now(),
         },
       }));
