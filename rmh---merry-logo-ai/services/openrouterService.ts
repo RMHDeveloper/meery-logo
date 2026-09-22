@@ -1,6 +1,6 @@
 import { PROMPT_TEMPLATE } from "../constants";
 
-const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
+const PROXY_URL = "/api/proxy";
 const REQUEST_TIMEOUT_MS = 120_000;
 
 // "openrouter/free" randomly routes across ~20 free models, some of which (e.g. safety
@@ -14,7 +14,11 @@ const VISION_MODELS = [
   "dots-studio/dots-3-note-preview:free",
 ];
 
-export const isOpenRouterConfigured = (): boolean => !!process.env.OPENROUTER_API_KEY?.trim();
+// OpenRouter chat completions are now routed through the dashboard proxy, so
+// this app no longer needs its own OpenRouter key. Always report
+// "configured" so the existing Gemini -> OpenRouter fallback logic in
+// aiOrnamentService still tries this path.
+export const isOpenRouterConfigured = (): boolean => true;
 
 type ContentPart =
   | { type: "text"; text: string }
@@ -22,18 +26,16 @@ type ContentPart =
 
 const chatCompletionWithModel = async (
   messages: { role: "system" | "user" | "assistant"; content: string | ContentPart[] }[],
-  model: string,
-  apiKey: string
+  model: string
 ): Promise<string> => {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
   let response: Response;
   try {
-    response = await fetch(OPENROUTER_URL, {
+    response = await fetch(PROXY_URL, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ model, messages }),
@@ -60,15 +62,10 @@ export const chatCompletion = async (
   messages: { role: "system" | "user" | "assistant"; content: string | ContentPart[] }[],
   models: string[] = VISION_MODELS
 ): Promise<string> => {
-  const apiKey = process.env.OPENROUTER_API_KEY?.trim();
-  if (!apiKey) {
-    throw new Error("OpenRouter API key is missing. Please set OPENROUTER_API_KEY in .env.");
-  }
-
   let lastError: unknown;
   for (const model of models) {
     try {
-      const text = await chatCompletionWithModel(messages, model, apiKey);
+      const text = await chatCompletionWithModel(messages, model);
       if (text.trim()) return text;
       lastError = new Error(`${model} returned an empty response.`);
     } catch (err) {
